@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Calculadora ISR</title>
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    text-align: center;
+    padding: 40px;
+  }
+  .card {
+    background: white;
+    color: #333;
+    padding: 25px;
+    border-radius: 15px;
+    max-width: 400px;
+    margin: auto;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  }
+  input, select {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+  button {
+    padding: 12px;
+    width: 95%;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  .resultado {
+    margin-top: 20px;
+    font-size: 18px;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Calculadora ISR 💸</h2>
+
+  <select id="tipo">
+    <option value="mensual">Mensual</option>
+    <option value="quincenal">Quincenal</option>
+  </select>
+
+  <input type="number" id="sueldo" placeholder="Sueldo base">
+  <input type="number" id="bono" placeholder="Bono de asistencia">
+
+  <button onclick="calcular()">Calcular</button>
+
+  <div class="resultado" id="res"></div>
+</div>
+
+<script>
+
+const tablaMensual = [
+[0.01,844.59,0,0.0192],
+[844.60,7168.51,16.22,0.064],
+[7168.52,12598.02,420.95,0.1088],
+[12598.03,14644.64,1011.68,0.16],
+[14644.65,17533.64,1339.14,0.1792],
+[17533.65,35362.83,1856.84,0.2136],
+[35362.84,55736.68,5665.16,0.2352],
+[55736.69,106410.50,10457.09,0.30],
+[106410.51,141880.66,25669.23,0.32],
+[141880.67,425641.99,37009.69,0.34],
+[425642.00,Infinity,133488.54,0.35]
+];
+
+const tablaQuincenal = [
+[0.01,422.29,0,0.0192],
+[422.30,3584.25,8.11,0.064],
+[3584.26,6299.01,210.48,0.1088],
+[6299.02,7322.32,505.84,0.16],
+[7322.33,8766.82,669.57,0.1792],
+[8766.83,17681.41,928.42,0.2136],
+[17681.42,27868.34,2832.58,0.2352],
+[27868.35,53205.25,5228.55,0.30],
+[53205.26,70940.33,12829.62,0.32],
+[70940.34,212820.99,18504.84,0.34],
+[212821.00,Infinity,66744.27,0.35]
+];
+
+function calcularISR(ingreso, tabla){
+  for(let i=0;i<tabla.length;i++){
+    let [li,ls,cuota,tasa]=tabla[i];
+    if(ingreso>=li && ingreso<=ls){
+      let excedente=ingreso-li;
+      return (excedente*tasa)+cuota;
+    }
+  }
+  return 0;
+}
+
+function calcular(){
+  let sueldo=parseFloat(document.getElementById("sueldo").value)||0;
+  let bono=parseFloat(document.getElementById("bono").value)||0;
+  let tipo=document.getElementById("tipo").value;
+
+  let ingreso=sueldo+bono;
+  let tabla = tipo==="mensual" ? tablaMensual : tablaQuincenal;
+
+  let isr = calcularISR(ingreso, tabla);
+  let neto = ingreso - isr;
+
+  document.getElementById("res").innerHTML = `
+    <b>Ingreso:</b> $${ingreso.toFixed(2)}<br>
+    <b>ISR:</b> $${isr.toFixed(2)}<br>
+    <b>Sueldo neto:</b> $${neto.toFixed(2)}
+  `;
+}
+
+</script>
+
+</body>
+</html>
